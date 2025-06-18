@@ -55,3 +55,4 @@ export default tseslint.config({
 
 - Запустить форматирование: yarn format
 - Проверить форматирование без изменений: yarn format:check
+
