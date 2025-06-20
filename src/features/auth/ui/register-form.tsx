@@ -182,16 +182,16 @@ const RegisterForm: FC = () => {
                     disabled={isLoading}
                   />
                 </FormControl>
-                <FormDescription>
-                  Пароль должен содержать:
+                <div className="text-muted-foreground text-sm">
+                  <p className="mb-2">Пароль должен соответствовать следующим требованиям:</p>
                   <ul className="list-disc list-inside mt-1 text-sm">
                     <li>Минимум 8 символов</li>
-                    <li>Заглавную букву</li>
-                    <li>Строчную букву</li>
-                    <li>Цифру</li>
-                    <li>Специальный символ</li>
+                    <li>Минимум одна заглавная буква</li>
+                    <li>Минимум одна строчная буква</li>
+                    <li>Минимум одна цифра</li>
+                    <li>Минимум один специальный символ</li>
                   </ul>
-                </FormDescription>
+                </div>
                 <FormMessage />
               </FormItem>
             )}

@@ -35,6 +35,12 @@ interface RegisterResponse {
   Role: string;
 }
 
+interface RefreshTokenResponse {
+  Token: string;
+  RefreshToken: string;
+  Expiration: string;
+}
+
 interface ValidationError {
   [key: string]: string[];
 }
@@ -58,13 +64,16 @@ export const authApi = {
       { signal }
     );
 
-    if (!data || !data.Token || !data.RefreshToken || !data.Expiration || !data.User) {
+    if (!data || !data.Token || !data.Expiration || !data.User) {
       throw new Error('Invalid server response format');
     }
 
     if (!data.User.Id || !data.User.Email || !data.User.Name || !data.User.Role) {
       throw new Error('Invalid user data format');
     }
+
+    sessionStorage.setItem('accessToken', data.Token);
+    sessionStorage.setItem('tokenExpiration', data.Expiration);
 
     return data;
   },
@@ -79,15 +88,18 @@ export const authApi = {
 
   logout: async (signal?: AbortSignal): Promise<void> => {
     await axiosInstance.post('/api/Auth/logout', {}, { signal });
-    localStorage.removeItem('user');
+    sessionStorage.removeItem('accessToken');
+    sessionStorage.removeItem('tokenExpiration');
   },
 
-  refreshToken: async (signal?: AbortSignal): Promise<void> => {
+  refreshToken: async (signal?: AbortSignal): Promise<RefreshTokenResponse> => {
     try {
-      await axiosInstance.post('/api/Auth/refresh', {}, { signal });
+      const { data } = await axiosInstance.post('/api/Auth/refresh', {}, { signal });
+      return data;
     } catch (error) {
       if (error instanceof AxiosError && error.response?.status === 401) {
-        localStorage.removeItem('user');
+        sessionStorage.removeItem('accessToken');
+        sessionStorage.removeItem('tokenExpiration');
         window.location.href = '/login';
       }
       throw error;

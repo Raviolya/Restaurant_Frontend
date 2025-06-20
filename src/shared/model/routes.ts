@@ -8,6 +8,13 @@ export const ROUTES = {
   POSITION: '/position/:positionId',
   BASKET: '/basket',
   PROFILE: '/profile',
+  ORDERS: '/orders',
+  ADMIN: {
+    DASHBOARD: '/admin',
+    MENU: '/admin/menu',
+    ORDERS: '/admin/orders',
+    USERS: '/admin/users'
+  }
 } as const;
 
 export type PathParams = {

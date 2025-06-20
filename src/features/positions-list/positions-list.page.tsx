@@ -1,16 +1,40 @@
-import type { FC } from 'react';
+import { MenuItemCard } from './ui/menu-item-card';
+import { CategoryFilter } from './ui/category-filter';
+import { LoadingSkeleton } from './ui/loading-skeleton';
+import { ErrorMessage } from './ui/error-message';
+import { usePositions } from './model/use-positions';
 
-const PositionsPage: FC = () => {
+const PositionsPage = () => {
+  const {
+    menuItems,
+    categories,
+    selectedCategory,
+    loading,
+    error,
+    setSelectedCategory,
+    handleRetry,
+  } = usePositions();
+
+  if (loading && !menuItems.length) {
+    return <LoadingSkeleton />;
+  }
+
+  if (error) {
+    return <ErrorMessage message={error} onRetry={handleRetry} />;
+  }
+
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-6 text-white">Меню</h1>
+    <div className="container mx-auto px-4 py-8">
+      <CategoryFilter
+        categories={categories}
+        selectedCategory={selectedCategory}
+        onCategorySelect={setSelectedCategory}
+      />
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {/* Здесь будет список позиций */}
-        <div className="p-4 border rounded-lg">
-          <h2 className="text-xl font-semibold">Заглушка позиции</h2>
-          <p className="text-gray-600">Описание позиции</p>
-          <p className="text-lg font-bold mt-2">100 ₽</p>
-        </div>
+        {menuItems.map((item) => (
+          <MenuItemCard key={item.Id} item={item} />
+        ))}
       </div>
     </div>
   );

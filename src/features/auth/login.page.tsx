@@ -4,16 +4,17 @@ import AuthLayout from './ui/authLayout';
 import LoginForm from './ui/login-form';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '@/shared/lib/store/auth.store';
 
 const LoginPage: FC = () => {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuthStore();
 
   useEffect(() => {
-    const user = localStorage.getItem('user');
-    if (user) {
+    if (isAuthenticated) {
       navigate(ROUTES.POSITIONS);
     }
-  }, [navigate]);
+  }, [navigate, isAuthenticated]);
 
   return (
     <AuthLayout

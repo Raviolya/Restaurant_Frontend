@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { CONFIG } from '@/shared/config';
+import { useAuthStore } from '../lib/store/auth.store';
 
 export const axiosInstance = axios.create({
   baseURL: CONFIG.API_BASE_URL,
@@ -13,6 +14,10 @@ export const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   (config) => {
+    const token = sessionStorage.getItem('accessToken');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
     return config;
   },
   (error) => {
@@ -35,11 +40,18 @@ axiosInstance.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        await axiosInstance.post('/api/Auth/refresh');
+        const response = await axiosInstance.post('/api/Auth/refresh');
+        const { Token, Expiration } = response.data;
+        
+        sessionStorage.setItem('accessToken', Token);
+        sessionStorage.setItem('tokenExpiration', Expiration);
 
+        originalRequest.headers.Authorization = `Bearer ${Token}`;
         return axiosInstance(originalRequest);
       } catch (refreshError) {
-        localStorage.removeItem('user');
+        sessionStorage.removeItem('accessToken');
+        sessionStorage.removeItem('tokenExpiration');
+        useAuthStore.getState().setUser(null);
         window.location.href = '/login';
         return Promise.reject(refreshError);
       }
