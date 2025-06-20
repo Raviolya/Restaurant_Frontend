@@ -7,6 +7,7 @@ import { lazy, Suspense } from 'react';
 import { Component as BasketPage } from '@/features/basket/basket.page';
 import { Component as OrdersPage } from '@/features/orders/orders.page';
 import { AdminDashboardPage } from '@/features/admin/admin.page';
+import { UserRole } from '@/shared/constat/constant';
 
 const ProfilePage = lazy(() =>
   import('@/features/profile/profile.page').then((module) => ({
@@ -66,7 +67,7 @@ export const router = createBrowserRouter([
         loader: () => redirect(ROUTES.POSITIONS),
       },
       {
-        path: "/orders",
+        path: ROUTES.ORDERS,
         element: (
           <ProtectedRoute>
             <Suspense fallback={<div>Загрузка...</div>}>
@@ -78,43 +79,33 @@ export const router = createBrowserRouter([
       {
         path: ROUTES.ADMIN.DASHBOARD,
         element: (
-          <ProtectedRoute requiredRole="Admin">
+          <ProtectedRoute requiredRole={UserRole.ADMIN}>
             <Suspense fallback={<div>Загрузка...</div>}>
               <AdminDashboardPage />
             </Suspense>
           </ProtectedRoute>
         ),
       },
-      // {
-      //   path: ROUTES.ADMIN.MENU,
-      //   element: (
-      //     <ProtectedRoute requiredRole="Admin">
-      //       <Suspense fallback={<div>Загрузка...</div>}>
-      //         <AdminMenuPage />
-      //       </Suspense>
-      //     </ProtectedRoute>
-      //   ),
-      // },
-      // {
-      //   path: ROUTES.ADMIN.ORDERS,
-      //   element: (
-      //     <ProtectedRoute requiredRole="Admin">
-      //       <Suspense fallback={<div>Загрузка...</div>}>
-      //         <AdminOrdersPage />
-      //       </Suspense>
-      //     </ProtectedRoute>
-      //   ),
-      // },
-      // {
-      //   path: ROUTES.ADMIN.USERS,
-      //   element: (
-      //     <ProtectedRoute requiredRole="Admin">
-      //       <Suspense fallback={<div>Загрузка...</div>}>
-      //         <AdminUsersPage />
-      //       </Suspense>
-      //     </ProtectedRoute>
-      //   ),
-      // },
+      {
+        path: ROUTES.ADMIN.ORDERS,
+        element: (
+          <ProtectedRoute requiredRole={UserRole.ADMIN}>
+            <Suspense fallback={<div>Загрузка...</div>}>
+              <AdminDashboardPage />
+            </Suspense>
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: ROUTES.ADMIN.MENU,
+        element: (
+          <ProtectedRoute requiredRole={UserRole.ADMIN}>
+            <Suspense fallback={<div>Загрузка...</div>}>
+              <AdminDashboardPage />
+            </Suspense>
+          </ProtectedRoute>
+        ),
+      },
     ],
   },
 ]);

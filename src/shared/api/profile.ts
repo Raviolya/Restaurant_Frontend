@@ -16,8 +16,7 @@ export interface UpdateCurrentUserDto {
 }
 
 export const profileApi = {
-  getCurrentUser: () =>
-    axiosInstance.get<CurrentUserProfileDto>('/api/Users/current'),
+  getCurrentUser: () => axiosInstance.get<CurrentUserProfileDto>('/api/Users/current'),
 
   updateCurrentUser: (userData: UpdateCurrentUserDto) =>
     axiosInstance.put<CurrentUserProfileDto>('/api/Users/current', userData),

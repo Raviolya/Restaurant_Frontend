@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { MenuService } from '@/shared/services/menu.service';
-import type { MenuItem } from '@/shared/api/menu';
+import type { MenuItemDto } from '@/shared/api/menu';
 import type { Category } from '@/shared/api/categories';
 import { categoriesApi } from '@/shared/api/categories';
 
 export const usePositions = () => {
-  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [menuItems, setMenuItems] = useState<MenuItemDto[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -56,4 +56,4 @@ export const usePositions = () => {
     setSelectedCategory,
     handleRetry,
   };
-}; 
+};

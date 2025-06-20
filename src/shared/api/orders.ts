@@ -34,18 +34,26 @@ export const ordersApi = {
   createOrder: (orderData: CreateOrderDto) =>
     axiosInstance.post<OrderResponseDto>('/api/Orders', orderData),
 
-  getOrderById: (id: string) =>
-    axiosInstance.get<OrderResponseDto>(`/api/Orders/${id}`),
+  getOrderById: (id: string) => axiosInstance.get<OrderResponseDto>(`/api/Orders/${id}`),
 
-  getMyOrders: () =>
-    axiosInstance.get<OrderResponseDto[]>('/api/Orders/my-orders'),
+  getMyOrders: () => axiosInstance.get<OrderResponseDto[]>('/api/Orders/my-orders'),
 
-  getAllOrders: () =>
-    axiosInstance.get<OrderResponseDto[]>('/api/Orders/admin'),
+  getAllOrders: async () => {
+    const { data } = await axiosInstance.get<OrderResponseDto[]>('/api/Orders/admin');
+    return data;
+  },
 
-  updateOrderStatus: (id: string, status: string) =>
-    axiosInstance.put<OrderResponseDto>(`/api/Orders/${id}/status?newStatus=${status}`),
+  getPendingOrders: async () => {
+    const { data } = await axiosInstance.get<OrderResponseDto[]>('/api/Orders/pending');
+    return data;
+  },
 
-  deleteOrder: (id: string) =>
-    axiosInstance.delete(`/api/Orders/${id}`),
-}; 
+  updateOrderStatus: async (orderId: string, newStatus: string) => {
+    const { data } = await axiosInstance.put<OrderResponseDto>(
+      `/api/Orders/${orderId}/status?newStatus=${newStatus}`
+    );
+    return data;
+  },
+
+  deleteOrder: (id: string) => axiosInstance.delete(`/api/Orders/${id}`),
+};

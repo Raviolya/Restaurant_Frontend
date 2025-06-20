@@ -2,10 +2,33 @@ import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/kit/card';
 import { Button } from '@/shared/ui/kit/button';
 import { Input } from '@/shared/ui/kit/input';
-import { Label } from '@/shared/ui/kit/label';
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  FormControl,
+} from '@/shared/ui/kit/form';
 import { useAuthStore } from '@/shared/lib/store/auth.store';
-import { profileApi, type CurrentUserProfileDto, type UpdateCurrentUserDto } from '@/shared/api/profile';
+import {
+  profileApi,
+  type CurrentUserProfileDto,
+  type UpdateCurrentUserDto,
+} from '@/shared/api/profile';
 import { toast } from 'sonner';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+
+const profileSchema = z.object({
+  FirstName: z.string().min(1, 'Имя обязательно'),
+  LastName: z.string().min(1, 'Фамилия обязательна'),
+  Email: z.string().email('Неверный формат email'),
+  Phone: z.string().min(10, 'Телефон должен содержать минимум 10 цифр'),
+});
+
+type ProfileFormData = z.infer<typeof profileSchema>;
 
 const ProfilePage = () => {
   const { isAuthenticated } = useAuthStore();
@@ -13,11 +36,15 @@ const ProfilePage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState<UpdateCurrentUserDto>({
-    Email: '',
-    Phone: '',
-    FirstName: '',
-    LastName: '',
+
+  const form = useForm<ProfileFormData>({
+    resolver: zodResolver(profileSchema),
+    defaultValues: {
+      FirstName: '',
+      LastName: '',
+      Email: '',
+      Phone: '',
+    },
   });
 
   useEffect(() => {
@@ -26,7 +53,7 @@ const ProfilePage = () => {
         const response = await profileApi.getCurrentUser();
         setProfile(response.data);
         const nameParts = response.data.Name.split(' ');
-        setFormData({
+        form.reset({
           Email: response.data.Email,
           Phone: response.data.Phone,
           FirstName: nameParts[0] || '',
@@ -43,21 +70,12 @@ const ProfilePage = () => {
     if (isAuthenticated) {
       fetchProfile();
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, form]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (data: ProfileFormData) => {
     try {
       setIsLoading(true);
-      const response = await profileApi.updateCurrentUser(formData);
+      const response = await profileApi.updateCurrentUser(data);
       setProfile(response.data);
       setIsEditing(false);
       toast.success('Профиль успешно обновлен');
@@ -128,79 +146,89 @@ const ProfilePage = () => {
           <CardTitle>Информация о пользователе</CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="FirstName">Имя</Label>
-                <Input
-                  id="FirstName"
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <FormField
+                  control={form.control}
                   name="FirstName"
-                  value={formData.FirstName}
-                  onChange={handleInputChange}
-                  disabled={!isEditing || isLoading}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Имя</FormLabel>
+                      <FormControl>
+                        <Input {...field} disabled={!isEditing || isLoading} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="LastName">Фамилия</Label>
-                <Input
-                  id="LastName"
+
+                <FormField
+                  control={form.control}
                   name="LastName"
-                  value={formData.LastName}
-                  onChange={handleInputChange}
-                  disabled={!isEditing || isLoading}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Фамилия</FormLabel>
+                      <FormControl>
+                        <Input {...field} disabled={!isEditing || isLoading} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
               </div>
-            </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="Email">Email</Label>
-              <Input
-                id="Email"
+              <FormField
+                control={form.control}
                 name="Email"
-                type="email"
-                value={formData.Email}
-                onChange={handleInputChange}
-                disabled={!isEditing || isLoading}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input type="email" {...field} disabled={!isEditing || isLoading} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="Phone">Телефон</Label>
-              <Input
-                id="Phone"
+              <FormField
+                control={form.control}
                 name="Phone"
-                value={formData.Phone}
-                onChange={handleInputChange}
-                disabled={!isEditing || isLoading}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Телефон</FormLabel>
+                    <FormControl>
+                      <Input {...field} disabled={!isEditing || isLoading} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
 
-            <div className="flex justify-end space-x-4">
-              {isEditing ? (
-                <>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => setIsEditing(false)}
-                    disabled={isLoading}
-                  >
-                    Отмена
+              <div className="flex justify-end space-x-4">
+                {isEditing ? (
+                  <>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setIsEditing(false)}
+                      disabled={isLoading}
+                    >
+                      Отмена
+                    </Button>
+                    <Button type="submit" disabled={isLoading}>
+                      {isLoading ? 'Сохранение...' : 'Сохранить'}
+                    </Button>
+                  </>
+                ) : (
+                  <Button type="button" onClick={() => setIsEditing(true)} disabled={isLoading}>
+                    Редактировать
                   </Button>
-                  <Button type="submit" disabled={isLoading}>
-                    {isLoading ? 'Сохранение...' : 'Сохранить'}
-                  </Button>
-                </>
-              ) : (
-                <Button
-                  type="button"
-                  onClick={() => setIsEditing(true)}
-                  disabled={isLoading}
-                >
-                  Редактировать
-                </Button>
-              )}
-            </div>
-          </form>
+                )}
+              </div>
+            </form>
+          </Form>
         </CardContent>
       </Card>
     </div>

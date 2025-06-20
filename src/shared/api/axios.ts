@@ -42,7 +42,7 @@ axiosInstance.interceptors.response.use(
       try {
         const response = await axiosInstance.post('/api/Auth/refresh');
         const { Token, Expiration } = response.data;
-        
+
         sessionStorage.setItem('accessToken', Token);
         sessionStorage.setItem('tokenExpiration', Expiration);
 

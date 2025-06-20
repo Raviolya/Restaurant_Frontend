@@ -1,41 +1,42 @@
 import { axiosInstance } from './axios';
 
-export interface MenuItem {
+export interface MenuItemDto {
   Id: string;
   Name: string;
-  Description: string;
+  Description?: string;
   Price: number;
   CategoryId: string;
   CategoryName: string;
   Ingredients: string[];
   IsAvailable: boolean;
-  ImageUrl: string;
+  ImageUrl?: string;
   CreatedAt: string;
   UpdatedAt: string;
 }
 
+export interface CreateMenuItemDto {
+  Name: string;
+  Description?: string;
+  Price: number;
+  CategoryId: string;
+  Ingredients: string[];
+  IsAvailable: boolean;
+  ImageUrl?: string;
+}
+
+export interface UpdateMenuItemDto extends CreateMenuItemDto {}
+
 export const menuApi = {
-  getAll: async (): Promise<MenuItem[]> => {
-    const { data } = await axiosInstance.get('/api/MenuItems');
-    return data;
+  async getMenuItems() {
+    return axiosInstance.get<MenuItemDto[]>('/api/MenuItems');
   },
-
-  getById: async (id: string): Promise<MenuItem> => {
-    const { data } = await axiosInstance.get(`/api/MenuItems/${id}`);
-    return data;
+  async createMenuItem(data: CreateMenuItemDto) {
+    return axiosInstance.post<MenuItemDto>('/api/MenuItems', data);
   },
-
-  getByCategory: async (categoryId: string): Promise<MenuItem[]> => {
-    const { data } = await axiosInstance.get(`/api/MenuItems/category/${categoryId}`);
-    return data;
+  async updateMenuItem(id: string, data: UpdateMenuItemDto) {
+    return axiosInstance.put<MenuItemDto>(`/api/MenuItems/${id}`, data);
   },
-
-  search: async (params: {
-    searchTerm?: string;
-    categoryId?: string;
-    isAvailable?: boolean;
-  }): Promise<MenuItem[]> => {
-    const { data } = await axiosInstance.get('/api/MenuItems/search', { params });
-    return data;
+  async deleteMenuItem(id: string) {
+    return axiosInstance.delete(`/api/MenuItems/${id}`);
   },
-}; 
+};

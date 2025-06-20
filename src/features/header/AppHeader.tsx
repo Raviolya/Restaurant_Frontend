@@ -1,12 +1,13 @@
 import { useState, type FC } from 'react';
 
-import { LogOut, ShoppingBasket, User, Menu as MenuIcon } from 'lucide-react';
+import { LogOut, ShoppingBasket, User, Menu as MenuIcon, ShieldCheck } from 'lucide-react';
 import { ROUTES } from '@/shared/model/routes';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Button } from '@/shared/ui/kit/button';
 import { useAuthStore } from '@/shared/lib/store/auth.store';
 import { AuthService } from '@/shared/services/auth.service';
 import { useBasketStore } from '@/shared/lib/store/basket.store';
+import { UserRole } from '@/shared/constat/constant';
 
 interface AppHeaderProps {}
 
@@ -114,6 +115,23 @@ const AppHeader: FC<AppHeaderProps> = () => {
                   </Link>
                 </Button>
               </li>
+              {user?.role === UserRole.ADMIN && (
+                <li>
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <Link
+                      className="flex items-center gap-2 font-bold text-xl hover:text-primary transition-colors"
+                      to={ROUTES.ADMIN.DASHBOARD}
+                    >
+                      <ShieldCheck className="h-5 w-5" />
+                      Админ панель
+                    </Link>
+                  </Button>
+                </li>
+              )}
               {isAuthenticated ? (
                 <>
                   <li>

@@ -1,34 +1,30 @@
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/shared/ui/kit/card';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardFooter,
+} from '@/shared/ui/kit/card';
 import { Badge } from '@/shared/ui/kit/badge';
 import { Button } from '@/shared/ui/kit/button';
-import type { MenuItem } from '@/shared/api/menu';
+import type { MenuItemDto } from '@/shared/api/menu';
 import { AddToBasketDialog } from './add-to-basket-dialog';
-import { useNavigate } from 'react-router-dom';
-import { ROUTES } from '@/shared/model/routes';
 
 interface MenuItemCardProps {
-  item: MenuItem;
+  item: MenuItemDto;
 }
 
 export const MenuItemCard = ({ item }: MenuItemCardProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const navigate = useNavigate();
-
-  const handleCardClick = () => {
-    navigate(ROUTES.POSITION.replace(':positionId', item.Id));
-  };
 
   return (
     <>
-      <Card className="overflow-hidden cursor-pointer" onClick={handleCardClick}>
+      <Card className="overflow-hidden">
         {item.ImageUrl && (
           <div className="relative h-48">
-            <img
-              src={item.ImageUrl}
-              alt={item.Name}
-              className="w-full h-full object-cover"
-            />
+            <img src={item.ImageUrl} alt={item.Name} className="w-full h-full object-cover" />
           </div>
         )}
         <CardHeader>
@@ -45,10 +41,7 @@ export const MenuItemCard = ({ item }: MenuItemCardProps) => {
               <h3 className="text-sm font-semibold text-gray-700">Ингредиенты:</h3>
               <div className="flex flex-wrap gap-2">
                 {item.Ingredients.map((ingredient) => (
-                  <Badge
-                    key={`${item.Id}-${ingredient}`}
-                    variant="outline"
-                  >
+                  <Badge key={`${item.Id}-${ingredient}`} variant="outline">
                     {ingredient}
                   </Badge>
                 ))}
@@ -57,17 +50,18 @@ export const MenuItemCard = ({ item }: MenuItemCardProps) => {
           )}
         </CardContent>
         <CardFooter>
-          {!item.IsAvailable && (
-            <Badge variant="destructive">Нет в наличии</Badge>
-          )}
-          <Button onClick={(e) => { e.stopPropagation(); setIsDialogOpen(true); }}>Добавить</Button>
+          {!item.IsAvailable && <Badge variant="destructive">Нет в наличии</Badge>}
+          <Button
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsDialogOpen(true);
+            }}
+          >
+            Добавить
+          </Button>
         </CardFooter>
       </Card>
-      <AddToBasketDialog
-        item={item}
-        isOpen={isDialogOpen}
-        onClose={() => setIsDialogOpen(false)}
-      />
+      <AddToBasketDialog item={item} isOpen={isDialogOpen} onClose={() => setIsDialogOpen(false)} />
     </>
   );
-}; 
+};

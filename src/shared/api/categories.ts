@@ -10,4 +10,4 @@ export const categoriesApi = {
     const { data } = await axiosInstance.get('/api/Categories');
     return data;
   },
-}; 
+};

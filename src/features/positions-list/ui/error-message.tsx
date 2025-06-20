@@ -12,11 +12,9 @@ export const ErrorMessage = ({ message, onRetry }: ErrorMessageProps) => {
       <Card className="w-full max-w-md">
         <CardContent className="p-6 text-center">
           <p className="text-xl font-semibold text-red-500 mb-4">{message}</p>
-          <Button onClick={onRetry}>
-            Попробовать снова
-          </Button>
+          <Button onClick={onRetry}>Попробовать снова</Button>
         </CardContent>
       </Card>
     </div>
   );
-}; 
+};

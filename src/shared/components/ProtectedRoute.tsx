@@ -1,16 +1,14 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../lib/store/auth.store';
 import { toast } from 'sonner';
+import { UserRole, type UserRoleType } from '../constat/constant';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  requiredRole?: string;
+  requiredRole?: UserRoleType;
 }
 
-export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ 
-  children, 
-  requiredRole 
-}) => {
+export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requiredRole }) => {
   const { user, isAuthenticated } = useAuthStore();
   const location = useLocation();
 

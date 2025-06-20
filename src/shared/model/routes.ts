@@ -13,8 +13,8 @@ export const ROUTES = {
     DASHBOARD: '/admin',
     MENU: '/admin/menu',
     ORDERS: '/admin/orders',
-    USERS: '/admin/users'
-  }
+    USERS: '/admin/users',
+  },
 } as const;
 
 export type PathParams = {

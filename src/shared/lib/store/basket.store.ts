@@ -26,7 +26,8 @@ export const useBasketStore = create<BasketState>()(
       addItem: (item, quantity = 1) => {
         set((state) => {
           const idx = state.items.findIndex(
-            (i) => i.Id === item.Id && JSON.stringify(i.Ingredients) === JSON.stringify(item.Ingredients)
+            (i) =>
+              i.Id === item.Id && JSON.stringify(i.Ingredients) === JSON.stringify(item.Ingredients)
           );
           if (idx > -1) {
             const updated = [...state.items];
@@ -50,4 +51,4 @@ export const useBasketStore = create<BasketState>()(
       name: 'basket-storage',
     }
   )
-); 
+);

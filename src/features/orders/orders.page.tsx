@@ -1,44 +1,9 @@
-import { useEffect, useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/kit/card';
-import { Badge } from '@/shared/ui/kit/badge';
-import { ordersApi, type OrderResponseDto, type OrderItemResponse } from '@/shared/api/orders';
+import { Card, CardContent } from '@/shared/ui/kit/card';
+import { useOrders } from './model/use-order';
+import OrdersCard from './ui/orders-card';
 
 const OrdersPage = () => {
-  const [orders, setOrders] = useState<OrderResponseDto[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const response = await ordersApi.getMyOrders();
-        // Сортируем заказы: сначала по статусу, затем по дате
-        const sortedOrders = response.data.sort((a, b) => {
-          const statusOrder = {
-            'Pending': 0,
-            'Preparing': 1,
-            'Completed': 2,
-            'Cancelled': 3
-          };
-          
-          const statusDiff = statusOrder[a.Status] - statusOrder[b.Status];
-          if (statusDiff !== 0) return statusDiff;
-          
-          // Если статусы одинаковые, сортируем по дате (новые сверху)
-          return new Date(b.CreatedAt).getTime() - new Date(a.CreatedAt).getTime();
-        });
-        
-        setOrders(sortedOrders);
-      } catch (err) {
-        setError('Не удалось загрузить историю заказов');
-        console.error('Ошибка при загрузке заказов:', err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchOrders();
-  }, []);
+  const { orders, isLoading, error } = useOrders();
 
   const renderContent = () => {
     if (isLoading) {
@@ -76,74 +41,7 @@ const OrdersPage = () => {
       );
     }
 
-    return (
-      <div className="space-y-4">
-        {orders.map((order) => (
-          <Card key={order.Id}>
-            <CardHeader>
-              <div className="flex justify-between items-center">
-                <CardTitle>Заказ #{order.Id.slice(0, 8)}</CardTitle>
-                <Badge
-                  variant={
-                    order.Status === 'Completed'
-                      ? 'default'
-                      : order.Status === 'Cancelled'
-                      ? 'destructive'
-                      : 'secondary'
-                  }
-                >
-                  {order.Status}
-                </Badge>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div>
-                  <p className="text-sm text-gray-500">
-                    Создан: {new Date(order.CreatedAt).toLocaleString()}
-                  </p>
-                </div>
-                
-                <div className="space-y-2">
-                  {order.OrderItems.map((item: OrderItemResponse) => (
-                    <div
-                      key={item.Id}
-                      className="flex justify-between items-center py-2 border-b last:border-0"
-                    >
-                      <div>
-                        <p className="font-medium">{item.MenuItemName}</p>
-                        <p className="text-sm text-gray-500">
-                          Количество: {item.Quantity}
-                        </p>
-                        {item.ExcludedIngredients.length > 0 && (
-                          <div className="mt-1">
-                            {item.ExcludedIngredients.map((ingredient: string) => (
-                              <Badge
-                                key={ingredient}
-                                variant="outline"
-                                className="mr-1 text-xs"
-                              >
-                                Без {ingredient}
-                              </Badge>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                      <p className="font-medium">{item.Price * item.Quantity} ₽</p>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="flex justify-between items-center pt-4 border-t">
-                  <span className="font-bold">Итого:</span>
-                  <span className="font-bold text-xl">{order.TotalPrice} ₽</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    );
+    return <OrdersCard orders={orders} />;
   };
 
   return (

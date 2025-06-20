@@ -1,13 +1,19 @@
 import { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/shared/ui/kit/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/shared/ui/kit/dialog';
 import { Button } from '@/shared/ui/kit/button';
 import { Checkbox } from '@/shared/ui/kit/checkbox';
-import type { MenuItem } from '@/shared/api/menu';
+import type { MenuItemDto } from '@/shared/api/menu';
 import { useBasketStore } from '@/shared/lib/store/basket.store';
 import { toast } from 'sonner';
 
 interface AddToBasketDialogProps {
-  item: MenuItem;
+  item: MenuItemDto;
   isOpen: boolean;
   onClose: () => void;
 }
@@ -18,9 +24,7 @@ export const AddToBasketDialog = ({ item, isOpen, onClose }: AddToBasketDialogPr
 
   const handleToggleIngredient = (ingredient: string) => {
     setSelectedIngredients((prev) =>
-      prev.includes(ingredient)
-        ? prev.filter((i) => i !== ingredient)
-        : [...prev, ingredient]
+      prev.includes(ingredient) ? prev.filter((i) => i !== ingredient) : [...prev, ingredient]
     );
   };
 
