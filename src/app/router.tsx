@@ -1,10 +1,15 @@
 import { ROUTES } from '../shared/model/routes';
 import { createBrowserRouter, redirect } from 'react-router-dom';
 import { App } from './app';
+import { Providers } from './providers';
 
 export const router = createBrowserRouter([
   {
-    element: <App />,
+    element: (
+      <Providers>
+        <App />
+      </Providers>
+    ),
     children: [
       {
         path: ROUTES.POSITIONS,
@@ -22,17 +27,11 @@ export const router = createBrowserRouter([
       },
       {
         path: ROUTES.LOGIN,
-        lazy: () =>
-          import('@/features/auth/login.page').then((module) => ({
-            Component: module.default,
-          })),
+        lazy: () => import('@/features/auth/login.page'),
       },
       {
         path: ROUTES.REGISTER,
-        lazy: () =>
-          import('@/features/auth/register.page').then((module) => ({
-            Component: module.default,
-          })),
+        lazy: () => import('@/features/auth/register.page'),
       },
       {
         path: ROUTES.BASKET,

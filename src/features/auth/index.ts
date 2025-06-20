@@ -1,2 +1,2 @@
-export { default as LoginPage } from './login.page';
-export { default as RegisterPage } from './register.page';
+export { Component as LoginPage } from './login.page';
+export { Component as RegisterPage } from './register.page';

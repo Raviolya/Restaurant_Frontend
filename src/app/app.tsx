@@ -8,9 +8,11 @@ export function App() {
   const isAuthPage = location.pathname === ROUTES.LOGIN || location.pathname === ROUTES.REGISTER;
 
   return (
-    <div>
-      {!isAuthPage && <AppHeader />}
-      <Outlet />
+    <div className="app-background">
+      <div className="min-h-screen flex flex-col relative z-10 backdrop-blur-[2px]">
+        {!isAuthPage && <AppHeader />}
+        <Outlet />
+      </div>
     </div>
   );
 }
