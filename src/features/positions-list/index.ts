@@ -1,1 +1,1 @@
-export { default as PositionsListPage } from './positions-list.page';
+export { Component as PositionsPage } from './positions-list.page';

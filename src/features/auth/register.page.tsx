@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { ROUTES } from '@/shared/model/routes';
-import AuthLayout from './authLayout';
-import RegisterForm from './register-form';
+import AuthLayout from './ui/authLayout';
+import RegisterForm from './ui/register-form';
 
 const RegisterPage: FC = () => {
   return (

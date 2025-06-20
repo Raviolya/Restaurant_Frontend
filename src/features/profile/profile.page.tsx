@@ -6,4 +6,4 @@ const Profile: FC<ProfileProps> = () => {
   return <div>Profile</div>;
 };
 
-export default Profile;
+export const Component = Profile;

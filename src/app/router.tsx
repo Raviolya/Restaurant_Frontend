@@ -13,10 +13,7 @@ export const router = createBrowserRouter([
     children: [
       {
         path: ROUTES.POSITIONS,
-        lazy: () =>
-          import('@/features/positions-list/positions-list.page').then((module) => ({
-            Component: module.default,
-          })),
+        lazy: () => import('@/features/positions-list/positions-list.page'),
       },
       {
         path: ROUTES.POSITION,
@@ -32,6 +29,10 @@ export const router = createBrowserRouter([
       {
         path: ROUTES.REGISTER,
         lazy: () => import('@/features/auth/register.page'),
+      },
+      {
+        path: ROUTES.PROFILE,
+        lazy: () => import('@/features/profile/profile.page'),
       },
       {
         path: ROUTES.BASKET,
